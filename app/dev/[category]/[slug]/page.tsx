@@ -1,9 +1,9 @@
-interface PostPageProps {
-  params: { category: string; slug: string }
-}
-
-export default function DevPostPage({ params }: PostPageProps) {
-  const { category, slug } = params
+export default async function DevPostPage({
+  params
+}: {
+  params: Promise<{ category: string; slug: string }>
+}) {
+  const { category, slug } = await params
   return (
     <main>
       <h1>개발 - {decodeURIComponent(category)}</h1>

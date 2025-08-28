@@ -1,9 +1,9 @@
-interface PostPageProps {
-  params: { category: string; slug: string }
-}
-
-export default function DailyPostPage({ params }: PostPageProps) {
-  const { category, slug } = params
+export default async function DailyPostPage({
+  params
+}: {
+  params: Promise<{ category: string; slug: string }>
+}) {
+  const { category, slug } = await params
   return (
     <main>
       <h1>일상 - {decodeURIComponent(category)}</h1>

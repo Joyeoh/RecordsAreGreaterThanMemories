@@ -6,12 +6,12 @@ export function generateStaticParams() {
   return CATEGORIES.map(category => ({ category }))
 }
 
-interface CategoryPageProps {
-  params: { category: string }
-}
-
-export default function DailyCategoryPage({ params }: CategoryPageProps) {
-  const { category } = params
+export default async function DailyCategoryPage({
+  params
+}: {
+  params: Promise<{ category: string }>
+}) {
+  const { category } = await params
   const decoded = decodeURIComponent(category)
 
   if (!CATEGORIES.includes(decoded)) {

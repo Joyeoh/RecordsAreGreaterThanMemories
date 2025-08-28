@@ -1,9 +1,9 @@
-interface CategoryPageProps {
-  params: { category: string }
-}
-
-export default function DevCategoryPage({ params }: CategoryPageProps) {
-  const { category } = params
+export default async function DevCategoryPage({
+  params
+}: {
+  params: Promise<{ category: string }>
+}) {
+  const { category } = await params
   return (
     <main>
       <h1>개발 - 카테고리: {decodeURIComponent(category)}</h1>
