@@ -61,9 +61,9 @@ async function getPostData(slug: string) {
 export default async function DailyPostPage({
   params
 }: {
-  params: { category: string; slug: string }
+  params: Promise<{ category: string; slug: string }>
 }) {
-  const { category, slug } = params
+  const { category, slug } = await params
   const post = await getPostData(slug)
 
   if (post.category !== category) {
