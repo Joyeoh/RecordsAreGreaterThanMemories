@@ -43,9 +43,9 @@ function getPosts(category: string) {
 export default async function DailyCategoryPage({
   params
 }: {
-  params: { category: string }
+  params: Promise<{ category: string }>
 }) {
-  const { category } = params
+  const { category } = await params
 
   if (!DAILY_CATEGORIES.includes(category)) {
     notFound()
