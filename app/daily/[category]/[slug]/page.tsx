@@ -8,7 +8,7 @@ import styles from './page.module.css'
 
 const postsDirectory = path.join(process.cwd(), 'posts')
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const fileNames = fs.readdirSync(postsDirectory)
   return fileNames
     .filter(fileName => fileName.endsWith('.md'))
