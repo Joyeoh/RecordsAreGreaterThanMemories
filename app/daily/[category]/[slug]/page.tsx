@@ -31,36 +31,22 @@ export function generateStaticParams() {
 }
 
 async function getPostData(slug: string) {
-  const fullPath = path.join(postsDirectory, `${slug}.md`)
+  const fileNames = fs.readdirSync(postsDirectory)
+  const fileName = fileNames.find(name => {
+    const fullPath = path.join(postsDirectory, name)
+    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const { data } = matter(fileContents)
+    return data.slug === slug
+  })
 
-  if (!fs.existsSync(fullPath)) {
-    const fileNames = fs.readdirSync(postsDirectory)
-    const foundFile = fileNames.find(fileName => {
-      const filePath = path.join(postsDirectory, fileName)
-      const fileContents = fs.readFileSync(filePath, 'utf8')
-      const { data } = matter(fileContents)
-      return data.slug === slug
-    })
-
-    if (!foundFile) {
-      notFound()
-    }
-    const correctPath = path.join(postsDirectory, foundFile)
-    const fileContents = fs.readFileSync(correctPath, 'utf8')
-    const matterResult = matter(fileContents)
-    const processedContent = await remark()
-      .use(html)
-      .process(matterResult.content)
-    const contentHtml = processedContent.toString()
-
-    return {
-      contentHtml,
-      ...(matterResult.data as { title: string; date: string; category: string })
-    }
+  if (!fileName) {
+    notFound()
   }
 
+  const fullPath = path.join(postsDirectory, fileName)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const matterResult = matter(fileContents)
+
   const processedContent = await remark()
     .use(html)
     .process(matterResult.content)
