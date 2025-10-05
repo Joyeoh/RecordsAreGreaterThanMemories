@@ -1,27 +1,73 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import styles from './page.module.css'
 
-const CATEGORIES = ['드라마', '일상', '여행']
+const DAILY_CATEGORIES = ['travel', 'drama'] // 실제 폴더명과 일치
 
 export function generateStaticParams() {
-  return CATEGORIES.map(category => ({ category }))
+  return DAILY_CATEGORIES.map(category => ({ category }))
+}
+
+function getPosts(category: string) {
+  const postsDirectory = path.join(process.cwd(), 'posts')
+
+  if (!fs.existsSync(postsDirectory)) {
+    return []
+  }
+
+  const fileNames = fs.readdirSync(postsDirectory)
+  const allPostsData = fileNames
+    .filter(fileName => fileName.endsWith('.md')) // 마크다운 파일만 대상으로 합니다.
+    .map(fileName => {
+      const fullPath = path.join(postsDirectory, fileName)
+      const fileContents = fs.readFileSync(fullPath, 'utf8')
+      const matterResult = matter(fileContents)
+
+      return {
+        slug: matterResult.data.slug,
+        ...(matterResult.data as {
+          title: string
+          date: string
+          category: string
+        })
+      }
+    })
+    .filter(post => post.category === category)
+
+  return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 export default async function DailyCategoryPage({
   params
 }: {
-  params: Promise<{ category: string }>
+  params: { category: string }
 }) {
-  const { category } = await params
-  const decoded = decodeURIComponent(category)
+  const { category } = params
 
-  if (!CATEGORIES.includes(decoded)) {
+  if (!DAILY_CATEGORIES.includes(category)) {
     notFound()
   }
 
+  const posts = getPosts(category)
+
   return (
-    <main>
-      <h1>일상 - 카테고리: {decoded}</h1>
-      <p>이 카테고리에 해당하는 포스트 목록을 보여줄 예정입니다.</p>
+    <main className={styles.container}>
+      <h1 className={styles.title}>{category.toUpperCase()}</h1>
+      <ul className={styles.postList}>
+        {posts.map(post => (
+          <li
+            key={post.slug}
+            className={styles.postItem}>
+            <Link href={`/daily/${category}/${post.slug}`}>
+              <h2 className={styles.postTitle}>{post.title}</h2>
+              <p className={styles.postDate}>{post.date}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </main>
   )
 }
