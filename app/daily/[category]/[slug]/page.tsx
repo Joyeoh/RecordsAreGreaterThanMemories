@@ -39,7 +39,7 @@ export default async function DailyPostPage({ params }: PostPageProps) {
             빠르게 찾을 수 있도록 돕습니다.
           </p>
           <blockquote>
-            "좋은 글은 독자를 배려하는 것에서 시작됩니다." - 유명한 누군가
+            &quot;좋은 글은 독자를 배려하는 것에서 시작됩니다.&quot; - 유명한 누군가
           </blockquote>
 
           <h2>소제목 2: 코드 블록과 목록 활용</h2>
